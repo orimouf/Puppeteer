@@ -186,7 +186,7 @@ function logMessage() {
    }
 
    // Schedule the cron job to run every minute
-   cron.schedule('*/10 * * * * *', () => {
+   cron.schedule('*/15 * * * * *', () => {
     logMessage();
    });
 

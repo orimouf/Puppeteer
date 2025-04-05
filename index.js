@@ -4,15 +4,6 @@ const puppeteer = require('puppeteer');
 
 const pageUrl = "https://www.hermes.com/fr/fr/category/femme/sacs-et-petite-maroquinerie/sacs-et-pochettes/#|";//'https://www.google.com/';
 const hermesData = '';
-async function initBrowser() {
-    // Initiate the browser 
-	const browser = await puppeteer.launch();//{headless: false}
-    // Create a new page with the default browser context 
-	const page = await browser.newPage(); 
-    // Go to the target website 
-	await page.goto(pageUrl); 
-    return page;
-} 
 
 async function getDataFromSite(page) {
     console.log("page open ...");
@@ -56,26 +47,58 @@ async function getDataFromSite(page) {
     console.log(newUrlsProductArray);
 
     const sendWhatsappMsg = (url) => {
+         
+        // Download the helper library from https://www.twilio.com/docs/node/install
+        const twilio = require("twilio"); // Or, for ESM: import twilio from "twilio";
+
+        // Find your Account SID and Auth Token at twilio.com/console
+        // and set the environment variables. See http://twil.io/secure
         const accountSid = process.env.ACCOUNT_SID;
         const authToken = process.env.AUTH_TOKEN;
-        const client = require('twilio')(accountSid, authToken);    
+        const client = twilio(accountSid, authToken);
 
-        client.messages
-        .create({
-            from: 'whatsapp:+14155238886',
-            contentSid: process.env.CONTENT_SID,
-            contentVariables: '{"1":"'+ url +'"}',
-            to: 'whatsapp:+213559670962'
-        })
+        async function createMessage() {
+        const message = await client.messages.create({
+            body: url,
+            from: "whatsapp:+14155238886",
+            to: "whatsapp:+213559670962",
+        });
+
+        console.log(message.body);
+        }
+
+        createMessage();
     }
 
-    sendWhatsappMsg(newUrlsProductArray[0]);    
+    newUrlsProductArray.map(url => {
+        sendWhatsappMsg(url); 
+    })
+
+    // wait 15s to reload
+    await new Promise(resolve => setTimeout(resolve, 15000));
+    checkout();
+      
 } 
 
-async function checkout() {
-    // Initiate the browser 
-	const page = await initBrowser(); 
-	await getDataFromSite(page); 
+async function checkout() { 
+     // Initiate the browser 
+     const browser = await puppeteer.launch({headless: true});//{headless: false}
+    try {
+        // Create a new page with the default browser context 
+        const page = await browser.newPage(); 
+        // Go to the target website 
+        await page.goto(pageUrl); 
+	    // const page = await initBrowser(); 
+	    await getDataFromSite(page);
+    } catch (e) {
+        console.log("catch Error");
+        console.log(e);
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        checkout()
+    } 
+    finally {
+        await browser.close();
+    }
 } 
 checkout();
     // console.log(titles ); 

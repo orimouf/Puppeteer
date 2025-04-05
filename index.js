@@ -19,7 +19,7 @@ async function getDataFromSite(page) {
         console.log(quantity)
         console.log(productsArray)
 
-        const searchArray = ["Arçon", "24/24", "Constance to go", "Constance to go cavale", "Evelyne 16", "Herbag 20", "Herbag 31"
+        const searchArray = ["24/24", "Constance to go", "Constance to go cavale", "Evelyne 16", "Herbag 20", "Herbag 31"
             , "Kelly to go", "Lindy", "Medor", "Medor 23", "Picotin 18", "Picotin pocket"];//, "Étrivière"
           
           productsArray.map((product, index) => {
@@ -70,9 +70,13 @@ async function getDataFromSite(page) {
         createMessage();
     }
 
-    newUrlsProductArray.map(url => {
-        sendWhatsappMsg(url); 
-    })
+    if (newUrlsProductArray.lenght === 0) {
+        console.log("No New Product Found!");
+    } else {
+        newUrlsProductArray.map(url => {
+            sendWhatsappMsg(url); 
+        })
+    }
 
     // wait 15s to reload
     await new Promise(resolve => setTimeout(resolve, 15000));

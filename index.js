@@ -29,7 +29,7 @@ app.listen(app.get('port'), function() {
 
 async function getDataFromSite(page) {
     console.log("page open ...");
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 5000));
     console.log("Geting Data ...");
     const newUrlsProductArray = await page.evaluate(() => {
 

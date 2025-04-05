@@ -61,7 +61,7 @@ async function getDataFromSite(page) {
         const message = await client.messages.create({
             body: url,
             from: "whatsapp:+14155238886",
-            to: "whatsapp:+213559670962",
+            to: "whatsapp:+213791602498",
         });
 
         console.log(message.body);
